@@ -1,0 +1,17 @@
+{
+  "result": "passed",
+  "coverage": [
+    "home render",
+    "five-tab navigation",
+    "search/empty state",
+    "save and remove replay",
+    "saved state survives reload",
+    "artwork modal open/close",
+    "privacy modal open/close",
+    "320/390/768px width checks",
+    "no page JavaScript errors"
+  ],
+  "limits": [
+    "Web export tested; native device, native share sheet, signed builds, and store submission are not tested."
+  ]
+}
