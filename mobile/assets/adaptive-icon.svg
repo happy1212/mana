@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"><defs><radialGradient id="red" cx="28%" cy="20%"><stop stop-color="#fa5841"/><stop offset=".45" stop-color="#d32b27"/><stop offset="1" stop-color="#7e1118"/></radialGradient><linearGradient id="gold" x2="1" y2="1"><stop stop-color="#fff0b3"/><stop offset=".45" stop-color="#e6c369"/><stop offset="1" stop-color="#bd8931"/></linearGradient><clipPath id="clip"><circle cx="512" cy="512" r="290"/></clipPath></defs>
+ <circle cx="512" cy="512" r="290" fill="url(#red)" stroke="#e2bc62" stroke-width="7.25"/>
+ <g clip-path="url(#clip)" fill="none" stroke="#f8db9b" stroke-width="7.25" stroke-dasharray="11.6 10.44" opacity=".95">
+ <path d="M309.0 164.0 Q526.5 512 439.5 860.0"/><path d="M346.70000000000005 164.0 Q564.2 512 477.2 860.0"/>
+ </g>
+ <text x="520.7" y="633.8" text-anchor="middle" font-family="DejaVu Sans" font-size="353.8" font-weight="bold" font-style="oblique" letter-spacing="-23.2" fill="#351510" stroke="#351510" stroke-width="8.7" paint-order="stroke">24</text>
+ <text x="520.7" y="628.0" text-anchor="middle" font-family="DejaVu Sans" font-size="353.8" font-weight="bold" font-style="oblique" letter-spacing="-23.2" fill="url(#gold)">24</text></svg>

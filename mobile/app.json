@@ -1,0 +1,67 @@
+{
+  "expo": {
+    "name": "Ismailpur Live24",
+    "slug": "ismailpurlive24",
+    "version": "1.0.0",
+    "scheme": "ismailpurlive24",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#11120F",
+    "ios": {
+      "bundleIdentifier": "com.ismailpurlive24.app",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.ismailpurlive24.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#11120F",
+        "foregroundImage": "./assets/adaptive-icon.png"
+      },
+      "permissions": [],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VIDEO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "com.google.android.gms.permission.AD_ID",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.VIBRATE"
+      ],
+      "predictiveBackGestureEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/icon.png",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-asset",
+        {
+          "assets": [
+            "./assets/share-poster.png",
+            "./assets/cricket-wallpaper.jpg"
+          ]
+        }
+      ],
+      "expo-sharing",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 180,
+          "backgroundColor": "#11120F"
+        }
+      ]
+    ]
+  }
+}

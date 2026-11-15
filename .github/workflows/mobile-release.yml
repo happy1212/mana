@@ -1,0 +1,126 @@
+name: Build iOS and Android releases
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/ismailpurlive24-mobile
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/mobile-release.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-release-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: mobile
+
+jobs:
+  checks:
+    name: Check mobile source
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+  build:
+    name: Build both platforms after manual dispatch
+    if: github.event_name == 'workflow_dispatch'
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+    steps:
+      - name: Check out reviewed source
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Verify the exact configured Expo project
+        run: |
+          node <<'NODE'
+          const app = require('./app.json').expo;
+          const eas = require('./eas.json');
+          const id = app.extra?.eas?.projectId;
+          const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+          if (typeof id !== 'string' || !uuid.test(id)) {
+            throw new Error('Link the intended Expo project with EAS init and commit its exact extra.eas.projectId before building. CI will not create a project.');
+          }
+          if (!app.ios?.bundleIdentifier || !app.android?.package) {
+            throw new Error('Confirm and configure both native application identifiers before building.');
+          }
+          const production = eas.build?.production;
+          if (production?.distribution !== 'store' || production.android?.buildType !== 'app-bundle') {
+            throw new Error('The production profile must use store distribution and an Android app-bundle.');
+          }
+          console.log('The configured Expo project and production profile passed validation.');
+          NODE
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Require an Expo access token
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo 'Add EXPO_TOKEN as a repository GitHub Actions secret.' >&2
+            exit 1
+          fi
+
+      - name: Set up Expo authentication and EAS CLI
+        uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
+        with:
+          eas-version: latest
+          packager: npm
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build signed iOS and Android release artifacts
+        run: >-
+          npx --yes eas-cli@latest build
+          --platform all
+          --profile production
+          --non-interactive
+          --freeze-credentials
+          --wait
+
+      - name: Record build-only completion
+        run: |
+          echo 'iOS and Android production cloud builds completed. See the EAS build links in the previous step.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No App Store Connect or Google Play submission was performed. Test the signed builds before selecting exact build IDs for submission.' >> "$GITHUB_STEP_SUMMARY"
